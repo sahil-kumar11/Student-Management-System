@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4" data-aos="fade-up">
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3>My Students</h3>
+            <h2 class="display-4">{{ total_students }}</h2>
+            <p class="mb-0">Students in my class</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <h3>Today's Attendance</h3>
+            <h2 class="display-4">{{ today_attendance }}%</h2>
+            <p class="mb-0">Present rate</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+            <div class="stat-icon">
+                <i class="fas fa-chalkboard"></i>
+            </div>
+            <h3>My Class</h3>
+            <h2 class="display-4">{{ teacher.classroom.name }}</h2>
+            <p class="mb-0">Section {{ teacher.classroom.section }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-md-8">
+        <div class="premium-card">
+            <h4 class="mb-4">
+                <i class="fas fa-user-graduate"></i> My Students
+                <small class="text-muted">({{ total_students }} students)</small>
+            </h4>
+            <div class="table-responsive">
+                <table class="premium-table table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Attendance</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td><strong>{{ student.student_id }}</strong></td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="user-avatar" style="width: 35px; height: 35px; font-size: 14px;">
+                                        {{ student.name|first|upper }}
+                                    </div>
+                                    {{ student.name }}
+                                </div>
+                            </td>
+                            <td>{{ student.email }}</td>
+                            <td>{{ student.phone }}</td>
+                            <td>
+                                <div class="progress" style="height: 5px; width: 80px;">
+                                    <div class="progress-bar bg-success" style="width: {{ student.attendance_percentage|default:0 }}%"></div>
+                                </div>
+                                <small>{{ student.attendance_percentage|default:0 }}%</small>
+                            </td>
+                            <td>
+                                <a href="/mark-attendance/" class="btn btn-sm btn-outline-premium">
+                                    <i class="fas fa-calendar-check"></i> Mark
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <i class="fas fa-users-slash" style="font-size: 40px; color: #ddd;"></i>
+                                <p class="mt-2">No students assigned yet</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Quick Actions -->
+        <div class="premium-card">
+            <h4 class="mb-3"><i class="fas fa-bolt"></i> Quick Actions</h4>
+            <div class="d-grid gap-3">
+                <a href="/mark-attendance/" class="btn btn-premium">
+                    <i class="fas fa-calendar-check"></i> Mark Attendance
+                </a>
+                <a href="/attendance-list/" class="btn btn-outline-premium">
+                    <i class="fas fa-clock"></i> View Attendance Records
+                </a>
+                <a href="/change-password/" class="btn btn-outline-premium">
+                    <i class="fas fa-key"></i> Change Password
+                </a>
+            </div>
+        </div>
+        
+        <!-- Today's Schedule -->
+        <div class="premium-card mt-4">
+            <h4 class="mb-3"><i class="fas fa-clock"></i> Today's Schedule</h4>
+            <div class="list-group">
+                <div class="list-group-item border-0 mb-2 rounded-3" style="background: #f8f9ff;">
+                    <div class="d-flex justify-content-between">
+                        <span><i class="fas fa-chalkboard text-primary"></i> {{ teacher.subject }}</span>
+                        <span class="badge bg-primary">{{ teacher.classroom.name }}</span>
+                    </div>
+                    <small class="text-muted">Period 1-2 (9:00 AM - 11:00 AM)</small>
+                </div>
+                <div class="list-group-item border-0 mb-2 rounded-3" style="background: #f8f9ff;">
+                    <div class="d-flex justify-content-between">
+                        <span><i class="fas fa-tasks text-success"></i> Preparation Time</span>
+                        <span class="badge bg-success">Planning</span>
+                    </div>
+                    <small class="text-muted">Period 3 (11:15 AM - 12:00 PM)</small>
+                </div>
+                <div class="list-group-item border-0 rounded-3" style="background: #f8f9ff;">
+                    <div class="d-flex justify-content-between">
+                        <span><i class="fas fa-chalkboard-user text-info"></i> {{ teacher.subject }} (Extra)</span>
+                        <span class="badge bg-info">Extra Class</span>
+                    </div>
+                    <small class="text-muted">Period 4-5 (12:15 PM - 2:00 PM)</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notice Board -->
+        <div class="premium-card mt-4">
+            <h4 class="mb-3"><i class="fas fa-bullhorn text-warning"></i> Latest Notice</h4>
+            {% if latest_notice %}
+            <div class="alert alert-info">
+                <strong>{{ latest_notice.title }}</strong>
+                <p class="mb-0 small mt-2">{{ latest_notice.message|truncatewords:15 }}</p>
+                <small class="text-muted">{{ latest_notice.created_at|timesince }} ago</small>
+            </div>
+            {% else %}
+            <p class="text-muted text-center">No notices available</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

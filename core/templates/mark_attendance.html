@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Mark Attendance{% endblock %}
+
+{% block content %}
+<div class="premium-card" data-aos="fade-up">
+    <div class="text-center mb-4">
+        <div class="stat-icon" style="font-size: 60px;">
+            <i class="fas fa-calendar-check" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+        </div>
+        <h3>Mark Class Attendance</h3>
+        <p class="text-muted">Select a class and mark attendance for all students at once</p>
+    </div>
+    
+    <form method="POST" action="/save-attendance/">
+        {% csrf_token %}
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <label class="form-label fw-bold">
+                    <i class="fas fa-chalkboard"></i> Select Class
+                </label>
+                <select name="classroom" id="classroomSelect" class="premium-input" required>
+                    <option value="">-- Choose a class --</option>
+                    {% for class in classrooms %}
+                        <option value="{{ class.id }}">{{ class.name }} - Section {{ class.section }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <label class="form-label fw-bold">
+                    <i class="fas fa-calendar-alt"></i> Attendance Date
+                </label>
+                <input type="date" name="date" id="dateInput" class="premium-input" value="{% now 'Y-m-d' %}" required>
+            </div>
+        </div>
+        
+        <div id="studentsList" style="display: none;">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> 
+                Mark attendance for all students in this class
+            </div>
+            
+            <div class="mb-3 d-flex gap-2">
+                <button type="button" class="btn btn-success" onclick="markAll('Present')">
+                    <i class="fas fa-check-circle"></i> All Present
+                </button>
+                <button type="button" class="btn btn-danger" onclick="markAll('Absent')">
+                    <i class="fas fa-times-circle"></i> All Absent
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="premium-table table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <tr><td colspan="3" class="text-center">Select a class first...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <button type="submit" class="btn btn-premium mt-3">
+                <i class="fas fa-save"></i> Save Attendance
+            </button>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$('#classroomSelect').change(function() {
+    var classId = $(this).val();
+    
+    if (classId) {
+        $('#studentsList').show();
+        $('#studentsTableBody').html('<tr><td colspan="3" class="text-center">Loading...</td></tr>');
+        
+        $.ajax({
+            url: '/get-students-by-class/',
+            data: {'class_id': classId},
+            dataType: 'json',
+            success: function(data) {
+                var tbody = $('#studentsTableBody');
+                tbody.empty();
+                
+                if (data.students.length > 0) {
+                    $.each(data.students, function(index, student) {
+                        var row = `
+                            <tr>
+                                <td><strong>${student.student_id}</strong></td>
+                                <td>${student.name}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <input type="radio" name="status_${student.id}" value="Present" id="present_${student.id}" checked>
+                                        <label for="present_${student.id}" class="btn btn-sm btn-outline-success">Present</label>
+                                        
+                                        <input type="radio" name="status_${student.id}" value="Absent" id="absent_${student.id}">
+                                        <label for="absent_${student.id}" class="btn btn-sm btn-outline-danger">Absent</label>
+                                    </div>
+                                  </tr>
+                        `;
+                        tbody.append(row);
+                    });
+                } else {
+                    tbody.html('<tr><td colspan="3" class="text-center">No students in this class</td></tr>');
+                }
+            }
+        });
+    } else {
+        $('#studentsList').hide();
+    }
+});
+
+function markAll(status) {
+    $(`input[value="${status}"]`).prop('checked', true);
+}
+</script>
+{% endblock %}

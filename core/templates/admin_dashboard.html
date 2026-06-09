@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4" data-aos="fade-up">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <h3>Total Students</h3>
+            <h2 class="display-4">{{ total_students }}</h2>
+            <p class="mb-0">Active enrolled students</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="stat-icon">
+                <i class="fas fa-chalkboard"></i>
+            </div>
+            <h3>Total Classes</h3>
+            <h2 class="display-4">{{ total_classes }}</h2>
+            <p class="mb-0">Active classrooms</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <div class="stat-icon">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+            <h3>Total Notices</h3>
+            <h2 class="display-4">{{ total_notices }}</h2>
+            <p class="mb-0">Published notices</p>
+        </div>
+    </div>
+</div>
+
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-md-8">
+        <div class="premium-card">
+            <h4 class="mb-4"><i class="fas fa-chart-bar"></i> Enrollment Analytics</h4>
+            <canvas id="enrollmentChart" height="300"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="premium-card">
+            <h4 class="mb-4"><i class="fas fa-calendar-alt"></i> Quick Actions</h4>
+            <div class="d-grid gap-3">
+                <a href="/add-student/" class="btn btn-premium">
+                    <i class="fas fa-user-plus"></i> Add New Student
+                </a>
+                <a href="/add-class/" class="btn btn-outline-premium">
+                    <i class="fas fa-plus-circle"></i> Create Class
+                </a>
+                <a href="/mark-attendance/" class="btn btn-outline-premium">
+                    <i class="fas fa-check-circle"></i> Mark Attendance
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="premium-card mt-4" data-aos="fade-up" data-aos-delay="200">
+    <h4 class="mb-3"><i class="fas fa-trophy"></i> Recent Achievements</h4>
+    <div class="row">
+        <div class="col-md-3 text-center">
+            <div class="display-4 text-primary">98%</div>
+            <p>Attendance Rate</p>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="display-4 text-success">45+</div>
+            <p>Activities Planned</p>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="display-4 text-info">12</div>
+            <p>Upcoming Events</p>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="display-4 text-warning">100%</div>
+            <p>Parent Satisfaction</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('enrollmentChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Student Enrollment',
+                data: [65, 78, 82, 91, 95, {{ total_students }}],
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

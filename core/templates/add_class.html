@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Create New Class{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto" data-aos="fade-up">
+        <div class="premium-card">
+            <div class="text-center mb-4">
+                <div class="stat-icon" style="font-size: 60px; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    <i class="fas fa-chalkboard"></i>
+                </div>
+                <h3 class="mt-3">Create a New Classroom</h3>
+                <p class="text-muted">Set up a new class with section and assign teachers later</p>
+            </div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-tag"></i> Class Name
+                    </label>
+                    <input type="text" 
+                           name="name" 
+                           class="premium-input" 
+                           placeholder="e.g., Computer Science, Mathematics, Physics"
+                           required>
+                    <small class="text-muted">Choose a descriptive name for the class</small>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-layer-group"></i> Section
+                    </label>
+                    <input type="text" 
+                           name="section" 
+                           class="premium-input" 
+                           placeholder="e.g., A, B, C, or Morning, Evening"
+                           required>
+                    <small class="text-muted">Specify the section or batch</small>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hasLab">
+                            <label class="form-check-label" for="hasLab">
+                                <i class="fas fa-flask"></i> Has Laboratory
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hasLibrary">
+                            <label class="form-check-label" for="hasLibrary">
+                                <i class="fas fa-book"></i> Has Library Access
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 justify-content-end mt-4">
+                    <a href="/admin-dashboard/" class="btn btn-outline-premium">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-premium">
+                        <i class="fas fa-plus-circle"></i> Create Class
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Recent Classes Preview -->
+        <div class="premium-card mt-4" data-aos="fade-up" data-aos-delay="100">
+            <h5 class="mb-3">
+                <i class="fas fa-history"></i> Recently Created Classes
+            </h5>
+            <div class="table-responsive">
+                <table class="table table-borderless">
+                    <tbody>
+                        {% for class in classes|slice:":5" %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white;">
+                                        <i class="fas fa-chalkboard"></i>
+                                    </div>
+                                    <div>
+                                        <strong>{{ class.name }}</strong>
+                                        <br>
+                                        <small class="text-muted">Section: {{ class.section }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-end">
+                                <span class="badge bg-primary">{{ class.student_set.count }} Students</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" class="text-center text-muted">No classes created yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Add animation effect on form submission
+document.querySelector('form').addEventListener('submit', function(e) {
+    let btn = this.querySelector('button[type="submit"]');
+    btn.innerHTML = '<span class="loading"></span> Creating Class...';
+    btn.disabled = true;
+});
+</script>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Left Side - Profile Card -->
+    <div class="col-xl-4 col-lg-5 mb-4" data-aos="fade-right">
+        <div class="premium-card text-center">
+            <div class="user-avatar" style="width: 120px; height: 120px; margin: 0 auto 20px; font-size: 48px; background: linear-gradient(135deg, #667eea, #764ba2);">
+                {{ student.name|first|upper }}
+            </div>
+            <h3 class="mb-1">{{ student.name }}</h3>
+            <p class="text-muted">{{ student.student_id }}</p>
+            
+            <div class="row mt-3">
+                <div class="col-6">
+                    <div class="border rounded p-2">
+                        <small class="text-muted">Class</small>
+                        <h6 class="mb-0">{{ student.classroom.name }}</h6>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="border rounded p-2">
+                        <small class="text-muted">Section</small>
+                        <h6 class="mb-0">{{ student.classroom.section }}</h6>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-3">
+            
+            <div class="text-start">
+                <p class="mb-2"><i class="fas fa-envelope text-primary"></i> <strong>Email:</strong> {{ student.email }}</p>
+                <p class="mb-2"><i class="fas fa-phone text-success"></i> <strong>Phone:</strong> {{ student.phone }}</p>
+                <p class="mb-2"><i class="fas fa-venus-mars text-info"></i> <strong>Gender:</strong> {{ student.gender }}</p>
+                <p class="mb-2"><i class="fas fa-calendar text-warning"></i> <strong>DOB:</strong> {{ student.dob|date:"d M Y" }}</p>
+                <p class="mb-0"><i class="fas fa-home text-danger"></i> <strong>Address:</strong> {{ student.address|truncatewords:10 }}</p>
+            </div>
+        </div>
+        
+        <!-- Quick Stats Card -->
+        <div class="premium-card mt-4">
+            <h5 class="mb-3"><i class="fas fa-chart-simple"></i> Quick Stats</h5>
+            <div class="row text-center">
+                <div class="col-4">
+                    <h4 class="text-primary mb-0">{{ attendance|length }}</h4>
+                    <small class="text-muted">Total Days</small>
+                </div>
+                <div class="col-4">
+                    {% with present=attendance|dictsort:"status" %}
+                    <h4 class="text-success mb-0">{{ attendance|length }}</h4>
+                    <small class="text-muted">Present</small>
+                    {% endwith %}
+                </div>
+                <div class="col-4">
+                    <h4 class="text-danger mb-0">{{ notices|length }}</h4>
+                    <small class="text-muted">Notices</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Side - Main Content -->
+    <div class="col-xl-8 col-lg-7" data-aos="fade-left">
+        <!-- Attendance Card -->
+        <div class="premium-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0"><i class="fas fa-chart-line text-primary"></i> Attendance Summary</h4>
+                <span class="badge bg-primary">Current Month</span>
+            </div>
+            
+            {% with total_days=attendance|length present_count=attendance|dictsort:"status" %}
+            {% if total_days > 0 %}
+            <div class="mb-4">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Overall Attendance Rate</span>
+                    <strong class="text-success">{{ present_count|floatformat:0 }}%</strong>
+                </div>
+                <div class="progress" style="height: 10px; border-radius: 10px;">
+                    <div class="progress-bar bg-success" style="width: {{ present_count|floatformat:0 }}%; border-radius: 10px;"></div>
+                </div>
+            </div>
+            {% endif %}
+            {% endwith %}
+            
+            <div class="table-responsive">
+                <table class="premium-table table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-calendar"></i> Date</th>
+                            <th><i class="fas fa-clock"></i> Day</th>
+                            <th><i class="fas fa-flag-checkered"></i> Status</th>
+                        </thead>
+                    </thead>
+                    <tbody>
+                        {% for a in attendance|slice:":10" %}
+                        <tr>
+                            <td><strong>{{ a.date|date:"d M Y" }}</strong></td>
+                            <td>{{ a.date|date:"l" }}</span></td>
+                            <td>
+                                {% if a.status == 'Present' %}
+                                    <span class="badge-present">
+                                        <i class="fas fa-check-circle"></i> Present
+                                    </span>
+                                {% else %}
+                                    <span class="badge-absent">
+                                        <i class="fas fa-times-circle"></i> Absent
+                                    </span>
+                                {% endif %}
+                            </span></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center py-4">
+                                <i class="fas fa-calendar-times" style="font-size: 40px; color: #ddd;"></i>
+                                <p class="mt-2">No attendance records found</p>
+                            </span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                 Abraham
+            </div>
+            {% if attendance|length > 10 %}
+            <div class="text-center mt-3">
+                <small class="text-muted">Showing last 10 records</small>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Fee Payment Card -->
+        <div class="premium-card mt-4" style="background: linear-gradient(135deg, #667eea10, #764ba210);">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h5 class="mb-1"><i class="fas fa-credit-card text-primary"></i> Fee Payment</h5>
+                    <p class="text-muted mb-0">Pay your pending fees online instantly</p>
+                </div>
+                <a href="/pay-fee/{{ student.id }}/" class="btn btn-premium">
+                    <i class="fas fa-arrow-right"></i> Pay Now
+                </a>
+            </div>
+        </div>
+        
+        <!-- Notices Card -->
+        <div class="premium-card mt-4">
+            <h4 class="mb-3"><i class="fas fa-bullhorn text-warning"></i> Latest Announcements</h4>
+            {% if notices %}
+                <div class="list-group">
+                    {% for n in notices|slice:":5" %}
+                    <div class="list-group-item border-0 mb-2 rounded-3" style="background: #f8f9ff; transition: all 0.3s;">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">{{ n.title }}</h6>
+                                <p class="text-muted small mb-1">
+                                    <i class="fas fa-calendar-alt"></i> {{ n.created_at|date:"F j, Y" }}
+                                </p>
+                                <p class="mb-0">{{ n.message|truncatewords:20 }}</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill ms-2">New</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if notices|length > 5 %}
+                <div class="text-center mt-3">
+                    <a href="/view-notices/" class="btn btn-outline-premium btn-sm">View All Notices</a>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-newspaper" style="font-size: 50px; color: #ddd;"></i>
+                    <p class="mt-2 text-muted">No notices available</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

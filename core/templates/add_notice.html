@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Publish Notice{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<style>
+    .ql-container {
+        min-height: 200px;
+        border-radius: 12px;
+    }
+    .ql-toolbar {
+        border-radius: 12px 12px 0 0;
+        background: #f8f9ff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto" data-aos="fade-up">
+        <div class="premium-card">
+            <div class="text-center mb-4">
+                <div class="stat-icon" style="font-size: 60px;">
+                    <i class="fas fa-bullhorn" style="background: linear-gradient(135deg, #4facfe, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                </div>
+                <h3>Create New Notice</h3>
+                <p class="text-muted">Broadcast important announcements to students and teachers</p>
+            </div>
+            
+            <form method="POST" id="noticeForm">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-heading"></i> Notice Title
+                    </label>
+                    <input type="text" 
+                           name="title" 
+                           class="premium-input" 
+                           placeholder="e.g., Holiday Announcement, Exam Schedule, Parent-Teacher Meeting"
+                           required>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-align-left"></i> Notice Content
+                    </label>
+                    <textarea name="message" 
+                              class="premium-input" 
+                              rows="6" 
+                              placeholder="Write your notice details here... Please include all relevant information such as date, time, venue, and instructions."
+                              required></textarea>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-calendar-alt"></i> Publish Date
+                        </label>
+                        <input type="date" class="premium-input" value="{% now 'Y-m-d' %}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-clock"></i> Expiry Date (Optional)
+                        </label>
+                        <input type="date" name="expiry_date" class="premium-input">
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-users"></i> Target Audience
+                    </label>
+                    <div class="d-flex gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="allStudents" checked>
+                            <label class="form-check-label" for="allStudents">All Students</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="allTeachers" checked>
+                            <label class="form-check-label" for="allTeachers">All Teachers</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="parents">
+                            <label class="form-check-label" for="parents">Parents</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    <strong>Important:</strong> This notice will be immediately visible to all selected users.
+                </div>
+                
+                <div class="d-flex gap-2 justify-content-end mt-4">
+                    <a href="/view-notices/" class="btn btn-outline-premium">
+                        <i class="fas fa-eye"></i> View All Notices
+                    </a>
+                    <button type="submit" class="btn btn-premium">
+                        <i class="fas fa-paper-plane"></i> Publish Notice
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Notice Tips -->
+        <div class="premium-card mt-4 bg-light">
+            <h6 class="mb-3"><i class="fas fa-lightbulb text-warning"></i> Pro Tips for Effective Notices:</h6>
+            <ul class="mb-0">
+                <li>Keep the title clear and attention-grabbing</li>
+                <li>Include all necessary dates and deadlines</li>
+                <li>Use bullet points for better readability</li>
+                <li>Highlight urgent information with <strong>bold text</strong></li>
+                <li>Add contact information for queries</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

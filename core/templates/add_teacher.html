@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Add New Teacher{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto" data-aos="fade-up">
+        <div class="premium-card">
+            <div class="text-center mb-4">
+                <div class="stat-icon" style="font-size: 60px;">
+                    <i class="fas fa-chalkboard-user" style="background: linear-gradient(135deg, #f093fb, #f5576c); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                </div>
+                <h3>Teacher Registration</h3>
+                <p class="text-muted">Add a new educator to the system</p>
+            </div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-user"></i> Full Name
+                        </label>
+                        <input type="text" name="name" class="premium-input" placeholder="Dr. John Smith" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-envelope"></i> Email Address
+                        </label>
+                        <input type="email" name="email" class="premium-input" placeholder="teacher@school.edu" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-book-open"></i> Subject Specialization
+                        </label>
+                        <input type="text" name="subject" class="premium-input" placeholder="e.g., Mathematics, Physics, English" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-chalkboard"></i> Assigned Class
+                        </label>
+                        <select name="classroom" class="premium-input" required>
+                            <option value="">Select a class</option>
+                            {% for c in classes %}
+                                <option value="{{ c.id }}">{{ c.name }} - Section {{ c.section }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-phone"></i> Phone Number
+                        </label>
+                        <input type="tel" name="phone" class="premium-input" placeholder="+1234567890">
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-calendar"></i> Joining Date
+                        </label>
+                        <input type="date" name="joining_date" class="premium-input">
+                    </div>
+                    
+                    <div class="col-12 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-graduation-cap"></i> Qualification
+                        </label>
+                        <input type="text" name="qualification" class="premium-input" placeholder="e.g., PhD in Computer Science, M.Sc. Mathematics">
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle"></i> The teacher will receive login credentials via email automatically.
+                </div>
+                
+                <div class="d-flex gap-2 justify-content-end mt-4">
+                    <a href="/view-teachers/" class="btn btn-outline-premium">
+                        <i class="fas fa-arrow-left"></i> Back to Teachers
+                    </a>
+                    <button type="submit" class="btn btn-premium">
+                        <i class="fas fa-save"></i> Register Teacher
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

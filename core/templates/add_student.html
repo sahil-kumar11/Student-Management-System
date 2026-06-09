@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block page_title %}{% if is_edit %}Edit Student{% else %}Add New Student{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto" data-aos="fade-up">
+        <div class="premium-card">
+            <div class="text-center mb-4">
+                <div class="stat-icon" style="font-size: 60px;">
+                    <i class="fas {% if is_edit %}fa-user-edit{% else %}fa-user-plus{% endif %}" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                </div>
+                <h3>{% if is_edit %}Edit Student{% else %}Register New Student{% endif %}</h3>
+                <p class="text-muted">{% if is_edit %}Update student information{% else %}Fill in the details to add a new student{% endif %}</p>
+            </div>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-id-card"></i> Student ID
+                        </label>
+                        <input type="text" name="student_id" class="premium-input" 
+                               value="{{ student.student_id|default:'' }}" 
+                               placeholder="Enter student ID" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-user"></i> Full Name
+                        </label>
+                        <input type="text" name="name" class="premium-input" 
+                               value="{{ student.name|default:'' }}" 
+                               placeholder="Enter full name" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-envelope"></i> Email Address
+                        </label>
+                        <input type="email" name="email" class="premium-input" 
+                               value="{{ student.email|default:'' }}" 
+                               placeholder="student@example.com" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-phone"></i> Phone Number
+                        </label>
+                        <input type="text" name="phone" class="premium-input" 
+                               value="{{ student.phone|default:'' }}" 
+                               placeholder="+1234567890" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-venus-mars"></i> Gender
+                        </label>
+                        <select name="gender" class="premium-input" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male" {% if student.gender == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if student.gender == 'Female' %}selected{% endif %}>Female</option>
+                            <option value="Other" {% if student.gender == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-calendar"></i> Date of Birth
+                        </label>
+                        <input type="date" name="dob" class="premium-input" 
+                               value="{{ student.dob|date:'Y-m-d'|default:'' }}" required>
+                    </div>
+                    
+                    <div class="col-12 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-home"></i> Address
+                        </label>
+                        <textarea name="address" class="premium-input" rows="3" 
+                                  placeholder="Enter complete address">{{ student.address|default:'' }}</textarea>
+                    </div>
+                    
+                    <div class="col-12 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-chalkboard"></i> Select Class
+                        </label>
+                        <select name="classroom" class="premium-input" required>
+                            <option value="">Choose a class</option>
+                            {% for c in classes %}
+                                <option value="{{ c.id }}" {% if student.classroom.id == c.id %}selected{% endif %}>
+                                    {{ c.name }} - {{ c.section }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-12 mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-image"></i> Profile Picture
+                        </label>
+                        <input type="file" name="profile_pic" class="premium-input" accept="image/*">
+                        {% if student.profile_pic %}
+                            <small class="text-muted d-block mt-1">
+                                Current: {{ student.profile_pic.name }}
+                            </small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if is_edit %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    <strong>Note:</strong> Changes will be reflected immediately in the system.
+                </div>
+                {% endif %}
+                
+                <div class="d-flex gap-2 justify-content-end mt-4">
+                    <a href="/students/" class="btn btn-outline-premium">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-premium">
+                        <i class="fas fa-save"></i> 
+                        {% if is_edit %}Update Student{% else %}Register Student{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Debug: Check if student data is received
+console.log("Edit mode:", {{ is_edit|lower }});
+console.log("Student data:", {{ student|default:'None' }});
+
+// Add loading effect on form submission
+document.querySelector('form').addEventListener('submit', function(e) {
+    let btn = this.querySelector('button[type="submit"]');
+    btn.innerHTML = '<span class="loading"></span> {% if is_edit %}Updating...{% else %}Processing...{% endif %}';
+    btn.disabled = true;
+});
+</script>
+{% endblock %}
