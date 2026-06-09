@@ -54,14 +54,6 @@ This project focuses on:
 - Present / Absent status
 - Attendance records management
 
-## 💰 Fee Management System
-- Fee structure creation
-- Payment tracking
-- Due amount calculation
-- Receipt generation
-- Multiple payment methods support
-- Overdue & pending fee handling
-
 ## 📢 Notice Board
 - Create and publish notices
 - Centralized announcement system
@@ -124,7 +116,7 @@ sms_project/
 ## 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/your-username/student-management-system.git
+git clone https://github.com/sahil-kumar11/student-management-system.git
 cd student-management-system
 ```
 
@@ -263,7 +255,7 @@ This project is licensed under the MIT License.
 
 # 👨‍💻 Developer
 
-Developed with ❤️ using Django Framework.
+Developed by Sahil Kumar using Django Framework.
 
 ---
 
